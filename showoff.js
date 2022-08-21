@@ -162,5 +162,6 @@ async function format(msg, page, browser, w1, channel, url) {
   });
 }
 
+start(`https://play.pokemonshowdown.com/`, `5345049469406`)
 
 module.exports = start
