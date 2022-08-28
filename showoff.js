@@ -1,167 +1,130 @@
-require("puppeteer");
-const puppeteer = require("puppeteer-extra");
-const { AttachmentBuilder } = require("discord.js");
+const uri = `https://catalog.roblox.com/v1/search/items/details?Category=2&Subcategory=2&SortType=4`
+const axios = require('axios').default
+const noblox = require("noblox.js")
+const colors = require('colors');
+const { WebhookClient, EmbedBuilder } = require('discord.js')
+const os = require('os')
+var op = require('os-utils');
+const sleep = require('atomic-sleep')
 
-const { WebhookClient, EmbedBuilder } = require("discord.js");
+class Sniper {
+    constructor() {
+        const hook = new WebhookClient({url: `https://discord.com/api/webhooks/1013271301147852894/UefvtLX0LlXb6ByX8GsUAiyonURLLo0rtRn-T0MWQdITzLvuPYRnOcRrDmv7LAC2cz9o`})
+        this.hook = hook
+    }
+    start() {
+        let i = 0
+        setInterval(function() {
+            i++
+            console.log(`[NOTIF] Searching market... [${i}]`.blue)
+            op.cpuUsage(function(v){
+                console.log(`[STATUS] System Status => Memory: ${(os.freemem()/1000000).toFixed(2)}/${((os.totalmem())/1000000).toFixed(2)}MB | CPU Usage: ${v.toFixed(3)}%`.yellow)
+            });
+            if(i === 10) {
+                console.log('[NOTIF] Clearing console & sleeping 10s...'.red)
+                setTimeout(function() {
+                    console.clear()
+                    i = 0
+                    sleep(5000)
+                    console.log(`[REBOOT] Successfully restarted AutoSniper`.green)
+                }, 3000)
+                
+            }
+            try {
+            axios.get(uri).then(async res => {
+                let data = res.data.data;
+                data.forEach(async d => {
+                    if(d.lowestPrice < 110) {
+                        purchase(d, callback => {
+                        })
+                    }
+                })
+            })
+            } catch(err) {
+                console.log(`[ERROR] An error occured while connecting the marketplace! Retrying in 7.5s...`.red)
+            }
+        }, 7500)
+    }
+    async login(c) {
+        const currentUser = await noblox.setCookie('_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_E74219544F10E2CD33B6BB517B612BBC1AA93725062F77958AA5624C13E54D2C56697D7F430583B29C2B368B0B34ADB96D18B336EF4902EF0DA15B1FBC5BD920B34E950CF44039A96798196ECA579DA30A9395DFD17DAECCE2AD2AE38027DC949DB272E1461E499DB5B4CD5E13AF506D9394002A85EE32C43641EB8FFFD5CF174105B075D94A23B1E7B9BD3A3EBE1191A3D7E11EF5FB9283AFA5671B14CFC03ACD866A7C9B3BCE4A548186D3580A6C53F9481CF2AD05DAA5D401E4AC64B1EB82E7821A5CEDB0D8F8A75B2BC1154786484F9CFEFFBDEC37C881F6AE2064E8BD6D625689DFD3F2A8A97FCC495014405228EC611C70A52F324220395C68BA07D380F1A5DD9DFD4CF837C839B9204BB75801BFEE75998206C280E0966B9B72FF77038E064CCBB8CB7F0C6071A775C5D1ED5CB7A8F43DD4E4D7C069D34844488D54126C9AC8C8878B257D2AA145F3879E16AC2F5BFDBFC1F2785EA28338C764926AAB1342481D') 
+        console.log(`Logged in as ${currentUser.UserName} [${currentUser.UserID}]`.green)
+        c(currentUser)
+    }
+    log(data, d) {
+        let ur =  `https://tr.rbxcdn.com/c741ac9023866ab92e31eb8560c4dd2a/420/420/Hat/Png`
+        try {
+        axios.get(`https://www.roblox.com/item-thumbnails?params=[{assetId:${data.AssetId}}]`).then(e => {
+             ur = e.data[0].thumbnailUrl
+     
 
-async function start(url, channel) {
-  let id = url.split('/')[3].split('-').join('-')
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-setuid-sandbox",
-    ],
-  });
-  const [page] = await browser.pages();
-  await page.goto(url, { waitUntil: "networkidle0" });
-  setTimeout(async function () {
-    let w1 = 0;
-    await page.screenshot(
-      {
-        path: "screenshot.jpg",
-      },
-      5000
-    );
-    console.log(`Connected to websocket`);
-    channel.send(`Connected to websocket!`)
-    page.on("console", (message) => {
-      format(message.text(), page, browser, w1, channel, url);
-    });
-  }, 3000);
+        const embed = new EmbedBuilder()
+        .setTitle(`New Limited sniped!`)
+        .addFields([
+            {
+                name: `Item`,
+                value: `${data.Name}`,
+                inline: true
+            },
+            {
+                name: `Cost`,
+                value: `${d.price}`,
+                inline: true
+            },
+            {
+                name: `Profit`,
+                value: `${d.profit}`,
+                inline: true
+            },
+            {
+                name: `Item ID`,
+                value: `${data.AssetId}`,
+                inline: true
+            },
+            {
+                name: `Time`,
+                value: `<t:${Math.floor(new Date()/1000)}:R>`,
+                inline: true
+            }
+        ])
+        .setColor('Gold')
+        .setTimestamp()
+        .setThumbnail(`${ur}`)
+        this.hook.send({embeds: [embed]})
+    })
+} catch(et) {
+    console.log(`[ERROR] An error occured while getting asset ID`)
+} 
+    }
+
+}
+const client = new Sniper()
+this.client = client
+
+
+async function purchase(data, cb) {
+    const resellers = await noblox.getResellers(data.id)
+    if((resellers[1].price - resellers[0].price) > 100) {
+    noblox.buy(data.id, data.lowestPrice).then(async c => {
+        cb(c)
+        if(typeof c === `string`) {
+            if(c.startsWith('Price')) console.log(`[ERROR] `.red + c.red)
+            } else {
+                const i = await noblox.getProductInfo(c.productId)
+                client.log(i, { price: data.lowestPrice , profit: resellers[0]-resellers[1] })
+                console.log(`[SUCCESS] Successfully sniped ${data.name} for ${data.lowestPrice}!`.green)
+                
+            }
+    })
+    } else {
+        console.log(`[ERROR] Purchase has no profit! Aborted...`.red + ` Item: ${data.name}`)
+        
+    }
 }
 
-async function format(msg, page, browser, w1, channel, url) {
-  let id = url.split('/')[3].split('-').join('-')
-  let str1 = ``,
-    str2 = ``;
-  const title = await page.title();
-  let names = title.split(" vs. ")
-  let n1 = names[0]
-  let n2 = names[1].split(' - ')[0]
-  
-  let i = msg.split("\n");
+client.login(c => {
 
-  i.forEach((e) => {
-    let sen = e.split("|");
-    s1(e);
-    if (!sen.length > 2) return;
-    s2(e);
-  });
-  function s1(e) {
-    let sen = e.split("|");
+})
 
-    if (!e.length > 2) return;
-    if (e.includes("p1a:")) {
-      if (!sen.length > 2) return;
-      if (sen[2].includes(`p2a:`)) return;
-      if (e.includes("move")) {
-        if (e.includes(`-fail`)) {
-          str1 += `${sen[2].split(" ")[1]} tried use ${sen[3]} but failed!\n`;
-        } else {
-          str1 += `> ${sen[2].split(" ")[1]} used **${sen[3]}**\n`;
-        }
-      } else if(e.includes(`switch`)) {
-        if(sen.length > 5) {
-        str1 += `${title.split(" vs. ")[0]} switched out with ${sen[3].split(',')[1]} **${sen[3].split(',')[0]}** [${sen[4]}] | *${sen[5]}*\n`
-        } else {
-          str1+= `${title.split(" vs. ")[0]} switched out with ${sen[3].split(',')[1]} **${sen[3].split(',')[0]}** [${sen[4]}]\n`
-        }
-      } else if(e.includes('faint')) {
-        let fainted = sen[2].split(' ')[1]
-        str1+= ` **${fainted}** has fainted!\n`
-      }
-    }
-  }
-  function s2(e) {
-    let sen = e.split("|");
-    if (e.includes("p2a:")) {
-      if (sen[2].includes(`p1a:`)) return;
-      if (e.includes("move")) {
-        if (e.includes(`-fail`)) {
-          str2 += `> ${sen[2].split(" ")[1]} tried use **${
-            sen[3]
-          }** but failed!`;
-        } else {
-          str2 += `${sen[2].split(" ")[1]} used **${sen[3]}**`;
-        }
-      } else if(e.includes(`switch`)) {
-        if(sen.length > 5) {
-        str2 += `${title.split(" vs. ")[0]} switched out with ${sen[3].split(',')[1]} **${sen[3].split(',')[0]}** [${sen[4]}] | *${sen[5]}*\n`
-        } else {
-          str2 += `${title.split(" vs. ")[0]} switched out with ${sen[3].split(',')[1]} **${sen[3].split(',')[0]}** [${sen[4]}]\n`
-        }
-      } else if(e.includes('faint')) {
-        let fainted = sen[2].split(' ')[1]
-        str2+= ` **${fainted}** has fainted!\n`
-      }
-    }
-  }
-  console.log(`> ${str1}\n> ${str2}\n`);
-  i.splice(0, 1);
-  if (i[0]) {
-    if (i[0] === `|`) i.splice(0, 1);
-  }
-  console.log(`-------------------`);
+client.log({Name: `Test`, AssetId: 10467173753 }, { price: 10000 , profit: 78})
+client.start()
 
-  if (str1 === `` && str2 === ``) return;
-  if (str1 === ``) str1 = `Switched`;
-  if (str2 === ``) str2 = `Switched`;
-
-  const webhookClient = new WebhookClient({
-    url: "https://discord.com/api/webhooks/1008732690620624997/LIpInD4udnamU87DXdq2Septfr9K-X00BUhTMxYUA2JGqbmQrE0e_Kf7d8aZrzz_pz_u",
-  });
-
-  const embed = new EmbedBuilder()
-    .setTitle(`${title}`)
-    .setColor(`Orange`)
-    .addFields([
-      { name: `${n1}`, value: `${str1}`, inline: true },
-      { name: `${n2}`, value: `${str2}`, inline: true },
-    ]);
-
-  if (w1 != 0) return;
-  channel.send({ embeds: [embed] }).then(async (e) => {
-    let id = url.split('/')[3].split('-').join('-')
-    let img = await page.$(
-      `#room-${id} > div.battle > div > div:nth-child(3)`
-    );
-    e.embeds[0];
-    try {
-      await page.waitForSelector(
-        `#room-${id} > div.battle-controls > p:nth-child(1) > button:nth-child(5)`
-      );
-      await page.click(
-        `#room-${id} > div.battle-controls > p:nth-child(1) > button:nth-child(5)`
-      );
-      await img.screenshot({
-        path: `battle.png`,
-      });
-    } catch (err) {
-      console.log(`Error: 347`)
-    }
-    const file = new AttachmentBuilder("./battle.png");
-    let receivedEmbed = e.embeds[0];
-    const exampleEmbed = EmbedBuilder.from(receivedEmbed).setImage(
-      `attachment://battle.png`
-    );
-    e.edit({ embeds: [exampleEmbed], files: [file] });
-  });
-  console.log(i);
-  i.forEach(async (ai) => {
-    if (ai.includes("win") && !ai.includes('Wyrmwind')) {
-      console.log(`Battle has ended!`)
-      w1++;
-      const embed = new EmbedBuilder()
-        .setTitle(`${title}`)
-        .setColor("Green")
-        .setDescription(`The battle has been completed!`);
-      channel.send({ embeds: [embed] }).then(async e =>       await browser.close())
-    }
-  });
-}
-
-start(`https://play.pokemonshowdown.com/`, `5345049469406`)
-
-module.exports = start
