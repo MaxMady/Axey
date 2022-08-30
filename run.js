@@ -1,14 +1,3 @@
-const express = require('express');
-const app = express();
-const path = require('path');
-
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.listen(process.env.PORT || 4000, function(){
-    console.log('Your node js server is running');
-});
 
 const uri = `https://catalog.roblox.com/v1/search/items/details?Category=2&Subcategory=2&SortType=4`
 const axios = require('axios').default
@@ -28,9 +17,10 @@ class Sniper {
         let i = 0
         setInterval(function() {
             i++
-            console.log(`[NOTIF] Searching market... [${i}]`.blue)
+            let ti = new Date()
+            console.log(`[NOTIF] [${ti.getHours()}:${ti.getMinutes()}:${ti.getSeconds()}] Searching market... [${i}]`.blue)
             op.cpuUsage(function(v){
-                console.log(`[STATUS] System Status => Memory: ${(os.freemem()/1000000).toFixed(2)}/${((os.totalmem())/1000000).toFixed(2)}MB | CPU Usage: ${v.toFixed(3)}%`.yellow)
+                console.log(`[STATUS] System Status => Memory: ${(os.freemem()/1000000).toFixed(2)}/${((os.totalmem())/1000000).toFixed(2)}MB | CPU Usage: ${(v*100).toFixed(3)}%`.yellow)
             });
             if(i === 10) {
                 console.log('[NOTIF] Clearing console & sleeping 10s...'.red)
@@ -46,7 +36,7 @@ class Sniper {
             axios.get(uri).then(async res => {
                 let data = res.data.data;
                 data.forEach(async d => {
-                    if(d.lowestPrice < 110) {
+                    if(d.lowestPrice <= 99) {
                         purchase(d, callback => {
                         })
                     }
@@ -54,11 +44,12 @@ class Sniper {
             })
             } catch(err) {
                 console.log(`[ERROR] An error occured while connecting the marketplace! Retrying in 7.5s...`.red)
+                
             }
         }, 7500)
     }
     async login(c) {
-        const currentUser = await noblox.setCookie('_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_E74219544F10E2CD33B6BB517B612BBC1AA93725062F77958AA5624C13E54D2C56697D7F430583B29C2B368B0B34ADB96D18B336EF4902EF0DA15B1FBC5BD920B34E950CF44039A96798196ECA579DA30A9395DFD17DAECCE2AD2AE38027DC949DB272E1461E499DB5B4CD5E13AF506D9394002A85EE32C43641EB8FFFD5CF174105B075D94A23B1E7B9BD3A3EBE1191A3D7E11EF5FB9283AFA5671B14CFC03ACD866A7C9B3BCE4A548186D3580A6C53F9481CF2AD05DAA5D401E4AC64B1EB82E7821A5CEDB0D8F8A75B2BC1154786484F9CFEFFBDEC37C881F6AE2064E8BD6D625689DFD3F2A8A97FCC495014405228EC611C70A52F324220395C68BA07D380F1A5DD9DFD4CF837C839B9204BB75801BFEE75998206C280E0966B9B72FF77038E064CCBB8CB7F0C6071A775C5D1ED5CB7A8F43DD4E4D7C069D34844488D54126C9AC8C8878B257D2AA145F3879E16AC2F5BFDBFC1F2785EA28338C764926AAB1342481D') 
+        const currentUser = await noblox.setCookie('_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_D20983304BA9DEAA6DAB613CA2EC3DC33B99AC96B476EC2AFB96C73BC81416BFDC2589DAD2FF584BC603743471A0EBAEAF6BAD833AE8B7B5F2898E4CC2A51E58403BE4F1F8158DA7889253E4F5D7CC8DA82E5C9ACA8F7E68E62A81A74F2041F967DE0882C3257DFA0E0063CC047D5B6E335F96C773C92F64C18EB71F499F11CCD07357519B77B9CA2A07F61E6830C67D042B78486F742C20627B61FBB119D6797880D9C2F01A20AD6547F7419A6361C7FFB0B47FFD7763259AA83B9E4D90DEEB98BC1E44C706EBF3533634E5F762762A46DCC04F6820CAAD89BB842E10ECF1EFC15DA72597C0A58335C0BEDE2620DAFE9BD7E78293A669B4111548B7BFD4686CCF384976D76E05119DA10FAB7FA6C28DAD357970DDCB8F15E5006775D3CA83137885BF38690402801227C00A81B7C6AF4EADDCE9E46C6243F1D600C272656B2D8EF3744FC520D7022252EA8EE3DB427B022FC61FC13F7028F8F2F09E74A73D68EA5BB9831EAF27316704F2E4378E7852BE84FEFE') 
         console.log(`Logged in as ${currentUser.UserName} [${currentUser.UserID}]`.green)
         c(currentUser)
     }
@@ -114,12 +105,24 @@ this.client = client
 
 
 async function purchase(data, cb) {
+    const hook = new WebhookClient({url: `https://discord.com/api/webhooks/1013271301147852894/UefvtLX0LlXb6ByX8GsUAiyonURLLo0rtRn-T0MWQdITzLvuPYRnOcRrDmv7LAC2cz9o`})
+try {
     const resellers = await noblox.getResellers(data.id)
-    if((resellers[1].price - resellers[0].price) > 100) {
-    noblox.buy(data.id, data.lowestPrice).then(async c => {
+    let _30per = resellers[0].price*30/100 + resellers[0];
+    if((_30per - resellers[0].price) > 17) {
+        console.log(data.lowestPrice)
+    noblox.buy(data.id).then(async c => {
         cb(c)
         if(typeof c === `string`) {
-            if(c.startsWith('Price')) console.log(`[ERROR] `.red + c.red)
+            if(c.startsWith('Price')) {
+                console.log(`[ERROR] `.red + c.red)
+                const ei = new EmbedBuilder()
+                .setTitle(`An error occured while purchasing an item!`)
+                .setDescription('```'+c.toString()+'```'+`\n**Item:** ${data.name}\n**Price**: ${resellers[0].price}\n\n> <t:${Math.floor(new Date()/1000)}:R>`)
+                .setColor(`Red`)
+                .setTimestamp()
+                hook.send({embeds:[ei]})
+            }
             } else {
                 const i = await noblox.getProductInfo(c.productId)
                 client.log(i, { price: data.lowestPrice , profit: resellers[0]-resellers[1] })
@@ -129,14 +132,32 @@ async function purchase(data, cb) {
     })
     } else {
         console.log(`[ERROR] Purchase has no profit! Aborted...`.red + ` Item: ${data.name}`)
-        
+        const aeiou = new EmbedBuilder()
+        .setTitle('Aborted Purchase due to lack of profit')
+        .setDescription('```js\n'+(JSON.stringify(data, null, 2)).toString()+'```')
+        .setColor(`Aqua`)
+        hook.send({embeds:[aeiou]})
     }
+} catch(err) {
+    console.log(`[ERROR] An unknow error occured!`.red)
+    const unknown = new EmbedBuilder()
+    .setTitle(`An Unknow Error occured!`)
+    .setDescription(`${Math.floor(new Date()/1000)}`+'```js\n'+err.toString()+'\n\n'+err.stack+'```')
+    .setColor(`Red`)
+    .setTimestamp()
+    hook.send({embeds: [unknown]})
+}
 }
 
 client.login(c => {
-
+    const hook = new WebhookClient({url: `https://discord.com/api/webhooks/1013271301147852894/UefvtLX0LlXb6ByX8GsUAiyonURLLo0rtRn-T0MWQdITzLvuPYRnOcRrDmv7LAC2cz9o`})
+const redy = new EmbedBuilder()
+.setTitle(`Successfully started Market Sniper!`)
+.setColor(`Green`)
+.setDescription(`<t:${Math.floor(new Date()/1000)}:R>\n\n> **User:** ${c.UserName} \n> **UserID:** \`${c.UserID}\`\n> **Premium:** ${c.IsPremium?`Subscribed`:`Not available`}`)
+.setThumbnail(`${c.ThumbnailUrl}`)
+.setTimestamp()
+hook.send({embeds: [redy]})
 })
 
-client.log({Name: `Test`, AssetId: 10467173753 }, { price: 10000 , profit: 78})
 client.start()
-
