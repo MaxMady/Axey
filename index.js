@@ -4,7 +4,7 @@ require("./src/Database/mongoose.js");
 const discord = require("discord.js");
 const { Axey } = require("./src/structure/client/client");
 
-const client = new PokeKai();
+const client = new Axey();
 
 client.build();
 client.loader();
