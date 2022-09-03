@@ -2,8 +2,8 @@ const { Client, Partials, Collection, GatewayIntentBits } = require("discord.js"
 const { loadCommands } = require("../../Functions/Discord/Handler/loadCommands");
 const { loadEvents } = require("../../Functions/Discord/Handler/loadEvents");
 const { loadSlashCommands } = require("../../Functions/Discord/Handler/loadSlashCommands");
-const TOKEN = "OTUwNTcyNzA1OTk0OTAzNjEy.Yia30Q.tVRff47_U3kWCiAnVaOd0rLf8L0";
-class PokeKai extends Client {
+const TOKEN = require('../../../config.js').token
+class Axey extends Client {
     constructor() {
         super({
             autoReconnect: true,
@@ -72,4 +72,4 @@ class PokeKai extends Client {
         }
     }
 }
-module.exports = { PokeKai };
+module.exports = { Axey };
