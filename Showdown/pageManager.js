@@ -11,7 +11,7 @@ async function e(cb) {
     if (pages === 0) {
         console.log(`Creating browser...`)
       browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",

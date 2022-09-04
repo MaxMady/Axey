@@ -15,6 +15,7 @@ async function verify(url) {
 
 e(async (page, browser) => {
     await page.goto('https://play.pokemonshowdown.com/', { waitUntil: "networkidle0" })
+    
     await page.click('#room- > div > div.leftmenu > div.mainmenu > div:nth-child(3) > p:nth-child(2) > button')
     await page.keyboard.type('Melon2345x')
     await page.click('body > div.ps-popup > form > p.buttonbar > button:nth-child(1)')

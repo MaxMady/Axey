@@ -29,12 +29,58 @@ async function start(url, channel) {
 }
 let laturn = `1`;
 async function format(msg, page, browser, w1, channel, url) {
+    const title = await page.title();
+  let m = msg.split('\n')
+  m.forEach(async (ai) => {
+    if ((
+      ai.includes("win") &&
+      !ai.includes("Wyrmwind") &&
+      !ai.includes("Tailwind"))) {
+      console.log(`Battle has ended!`);
+      w1++;
+      const embed = new EmbedBuilder()
+        .setTitle(`${title}`)
+        .setColor("Green")
+        .setDescription(`${ai.split("|")[2]} has won the battle!`);
+      channel
+        .send({ embeds: [embed] })
+        .then(async (e) => {
+          let pagg = await db.get('page')
+          if(pagg === null) pagg = 1;
+          pagg--;
+          if(pagg === 0) {
+            await db.set(`browser`, null)
+            await browser.close();
+          }
+          await db.set(`page`, pagg)
+        });
+    } else if( ai.includes('forfeited.')) {
+      w1++;
+      const embed = new EmbedBuilder()
+        .setTitle(`${title}`)
+        .setColor("Green")
+        .setDescription(`${ai.split("|")[2].split('forfieted.')[0]} has forfeited! The battle has ended...`);
+      channel
+        .send({ embeds: [embed] })
+        .then(async (e) => {
+          let pagg = await db.get('page')
+          if(pagg === null) pagg = 1;
+          pagg--;
+          if(pagg === 0) {
+            await db.delete(`browser`)
+            await browser.close();
+          }
+          await db.set(`page`, pagg)
+        });
+    }
+  });
+
+  console.log(m)
   let id = url.split("/")[3].split("-").join("-");
   let str1 = ``,
     str2 = ``,
     str3 = ``,
     turn = `0`;
-  const title = await page.title();
   let names = title.split(" vs. ");
   let n1 = names[0];
   let n2 = names[1].split(" - ")[0];
@@ -89,18 +135,18 @@ async function format(msg, page, browser, w1, channel, url) {
         let fainted = sen[2].split(" ")[1];
         str1 += ` **${fainted}** has fainted!\n`;
       } else if (e.includes("-boost")) {
-        str1 += `${sen[2].split(":")[1]}'s ${sen[3]} rose by ${
+        str1 += `${sen[2].split(":")[1]}'s ${sen[3]} rose to ${
           sen[4]
         } stage(s)!\n`;
       } else if (e.includes("-damage")) {
+        let hp = sen[3].split("/")[0]
+        if(hp === `0 fnt`){ hp = `0% [FAINTED]`} else { hp += `%` }
         if (sen.length > 4) {
-          str1 += `${sen[2].split(":")[1]} was hurt by ${
+          str1 += `${hp} was hurt by ${
             sen[4].split(" ")[2]
-          }. HP: \`${sen[3].split("/")[0]}%\`\n`;
+          }. HP: \`${hp}\`\n`;
         } else {
-          str1 += `${sen[2].split(":")[1]} lost some HP! \`HP: ${
-            sen[3].split("/")[0]
-          }\`\n`;
+          str1 += `${sen[2].split(":")[1]} lost some HP! \`HP: ${hp}\`\n`;
         }
       } else if (e.includes("-heal")) {
         str1 += `${sen[2].split(":")[1]} healed its HP to **${
@@ -165,14 +211,16 @@ async function format(msg, page, browser, w1, channel, url) {
         let fainted = sen[2].split(" ")[1];
         str2 += ` **${fainted}** has fainted!\n`;
       } else if (e.includes("-boost")) {
-        str2 += `${sen[2].split(":")[1]}'s ${sen[3]} rose by ${
+        str2 += `${sen[2].split(":")[1]}'s ${sen[3]} rose to ${
           sen[4]
         } stage(s)!\n`;
       } else if (e.includes("-damage")) {
+        let hp = sen[3].split("/")[0]
+          if(hp === `0 fnt`){ hp = `0% [FAINTED]`} else { hp += `%` }
         if (sen.length > 4) {
           str2 += `${sen[2].split(":")[1]} was hurt by ${
             sen[4].split(" ")[2]
-          }. HP: \`${sen[3].split("/")[0]}%\`\n`;
+          }. HP: \`${hp}\`\n`;
         } else {
           str2 += `${sen[2].split(":")[1]} lost some HP! \`HP: ${
             sen[3].split("/")[0]
@@ -185,7 +233,7 @@ async function format(msg, page, browser, w1, channel, url) {
       } else if (e.includes("-sidestart")) {
         str2 += `${sen[3]} were placed on the battle field!\n`;
       } else if (e.includes("-status")) {
-        let poke = sen[1].splice(0, 1);
+        let poke = sen[1].split(' ').splice(0, 1);
         if (e.includes(`psn`)) {
           str2 += `${sen.join(" ")} was poisoned!\n`;
         } else if (e.includes("slp")) {
@@ -250,6 +298,7 @@ async function format(msg, page, browser, w1, channel, url) {
   const embed = new EmbedBuilder()
     .setTitle(`${title}`)
     .setColor(`Orange`)
+    .setURL(`${url}`)
     .setAuthor({ name: `Turn ${turn}` })
     .addFields([
       { name: `${n1}`, value: `${str1}`, inline: true },
@@ -284,32 +333,7 @@ async function format(msg, page, browser, w1, channel, url) {
     );
     e.edit({ embeds: [exampleEmbed], files: [file] });
   });
-  i.forEach(async (ai) => {
-    if (
-      ai.includes("win") &&
-      !ai.includes("Wyrmwind") &&
-      !ai.includes("Tailwind")
-    ) {
-      console.log(`Battle has ended!`);
-      w1++;
-      const embed = new EmbedBuilder()
-        .setTitle(`${title}`)
-        .setColor("Green")
-        .setDescription(`${ai.split("|")[2]} has won the battle!`);
-      channel
-        .send({ embeds: [embed] })
-        .then(async (e) => {
-          let pagg = await db.get('page')
-          if(pagg === null) pagg = 1;
-          pagg--;
-          if(pagg === 0) {
-            await db.set(`browser`, null)
-            await browser.close();
-          }
-          await db.set(`page`, pagg)
-        });
-    }
-  });
+  
 }
 
 module.exports = start;
