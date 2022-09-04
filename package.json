@@ -5,7 +5,7 @@
   "main": "run.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node run.js"
+    "start": "node Showdown/verify.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/MaxMady/Axey#readme",
   "dependencies": {
     "ascii-table": "^0.0.9",
+    "atomic-sleep": "^1.0.0",
     "better-sqlite3": "^7.6.2",
     "discord.js": "^14.2.0",
     "mongoose": "^6.5.2",
