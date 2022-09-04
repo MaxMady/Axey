@@ -19,11 +19,13 @@
   "homepage": "https://github.com/MaxMady/Axey#readme",
   "dependencies": {
     "ascii-table": "^0.0.9",
+    "better-sqlite3": "^7.6.2",
     "discord.js": "^14.2.0",
     "mongoose": "^6.5.2",
     "os": "^0.1.2",
     "pretty-ms": "^8.0.0",
     "puppeteer": "^16.2.0",
-    "puppeteer-extra": "^3.3.4"
+    "puppeteer-extra": "^3.3.4",
+    "quick.db": "^9.0.6"
   }
 }

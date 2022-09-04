@@ -1,21 +1,15 @@
 require("puppeteer");
 const puppeteer = require("puppeteer-extra");
 const { AttachmentBuilder } = require("discord.js");
+const e = require('./pageManager.js').e
 
 const { WebhookClient, EmbedBuilder } = require("discord.js");
-
+const {QuickDB} = require('quick.db')
+const db = new QuickDB()
 async function start(url, channel) {
   console.log(url);
   let id = url.split("/")[3].split("-").join("-");
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-setuid-sandbox",
-    ],
-  });
-  const [page] = await browser.pages();
+  e(async (page, browser) => {
   await page.goto(url, { waitUntil: "networkidle0" });
   setTimeout(async function () {
     let w1 = 0;
@@ -31,6 +25,7 @@ async function start(url, channel) {
       format(message.text(), page, browser, w1, channel, url);
     });
   }, 3000);
+})
 }
 let laturn = `1`;
 async function format(msg, page, browser, w1, channel, url) {
@@ -208,7 +203,6 @@ async function format(msg, page, browser, w1, channel, url) {
     }
   }
   function s3(e) {
-    console.log(e);
     let sen = e.split("|");
 
     if (e.includes("-weather")) {
@@ -238,9 +232,7 @@ async function format(msg, page, browser, w1, channel, url) {
         str3 += `${poke}'s ${whatend} ended!\n`;
       }
     }
-    console.log(str3);
   }
-  console.log(`> ${str1}\n> ${str2}\n> ${str3}\n`);
   i.splice(0, 1);
   if (i[0]) {
     if (i[0] === `|`) i.splice(0, 1);
@@ -306,7 +298,16 @@ async function format(msg, page, browser, w1, channel, url) {
         .setDescription(`${ai.split("|")[2]} has won the battle!`);
       channel
         .send({ embeds: [embed] })
-        .then(async (e) => await browser.close());
+        .then(async (e) => {
+          let pagg = await db.get('page')
+          if(pagg === null) pagg = 1;
+          pagg--;
+          if(pagg === 0) {
+            await db.set(`browser`, null)
+            await browser.close();
+          }
+          await db.set(`page`, pagg)
+        });
     }
   });
 }
