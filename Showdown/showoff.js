@@ -36,10 +36,13 @@ async function format(msg, page, browser, w1, interaction, url, index) {
         if(ai.includes(`p1:`) || ai.includes(`p2:`)) return;
       console.log(`Battle has ended!`);
       w1++;
+      
       const embed = new EmbedBuilder()
         .setTitle(`${title}`)
         .setColor("Green")
         .setDescription(`${ai.split("|")[2]} has won the battle!`);
+        let tip = Math.random()*10
+        if(tip > 8) embed.setFooter({ text: `An awesome bot by Dux#2925` })
       interaction.channel
         .send({ embeds: [embed] })
         .then(async (e) => {
@@ -60,6 +63,8 @@ async function format(msg, page, browser, w1, interaction, url, index) {
         .setTitle(`${title}`)
         .setColor("Green")
         .setDescription(`${ai.split("|")[2].split('forfieted.')[0]} has forfeited! The battle has ended...`);
+        let tip1 = Math.random()*10
+        if(tip1 > 8) embed.setFooter({ text: `An awesome bot by Dux#2925` })
       interaction.channel.send({ embeds: [embed] }).then(async (e) => {
           let pagg = await db.get('page')
           if(pagg === null) pagg = 1;
@@ -302,6 +307,8 @@ async function format(msg, page, browser, w1, interaction, url, index) {
       { name: `${n1}`, value: `${str1}`, inline: true },
       { name: `${n2}`, value: `${str2}`, inline: true },
     ]);
+    let tip2 = Math.random()*10
+   if(tip2 > 8) embed.setFooter({ text: `An awesome bot by Dux#2925` })
   if (str3 != ``) {
     embed.setDescription(`${str3}`);
   }
