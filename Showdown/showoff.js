@@ -9,16 +9,11 @@ const db = new QuickDB()
 async function start(url, channel) {
   console.log(url);
   let id = url.split("/")[3].split("-").join("-");
-  e(async (page, browser) => {
+  e(async (page, browser, index) => {
   await page.goto(url, { waitUntil: "networkidle0" });
   setTimeout(async function () {
     let w1 = 0;
-    await page.screenshot(
-      {
-        path: "screenshot.jpg",
-      },
-      5000
-    );
+
     console.log(`Connected to websocket`);
     channel.send(`Connected to websocket!`);
     page.on("console", (message) => {
@@ -49,7 +44,7 @@ async function format(msg, page, browser, w1, channel, url) {
           if(pagg === null) pagg = 1;
           pagg--;
           if(pagg === 0) {
-            await db.set(`browser`, null)
+            await db.delete(`browser`)
             await browser.close();
           } else {
             await page.close();
@@ -323,12 +318,12 @@ async function format(msg, page, browser, w1, channel, url) {
         `#room-${id} > div.battle-controls > p:nth-child(1) > button:nth-child(5)`
       );
       await img.screenshot({
-        path: `battle.png`,
+        path: `Battle_Images/battle.png`,
       });
     } catch (err) {
       console.log(`Error: 347`);
     }
-    const file = new AttachmentBuilder("./battle.png");
+    const file = new AttachmentBuilder("./Battle_Images/battle.png");
     let receivedEmbed = e.embeds[0];
     const exampleEmbed = EmbedBuilder.from(receivedEmbed).setImage(
       `attachment://battle.png`

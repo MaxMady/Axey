@@ -19,7 +19,7 @@ async function e(cb) {
         ],
       });
       const [page] = await browser.pages();
-      cb(page, browser);
+      cb(page, browser, 1);
       let pg = await db.set('page', 1);
       return browser;
     } else {
@@ -28,7 +28,7 @@ async function e(cb) {
       if(pp === null) pp = 0;
       pp++;
       await db.set(`page`, pp)
-      cb(page, browser);
+      cb(page, browser, pp);
     }
   } catch (err) {
     console.log(`An error occured:`);
