@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
-const { getStarterPokemon } = require("../../../Functions/Game/Pokemon");
-const { _toTitleCase } = require("../../../Functions/System/_toTitleCase");
+
 const start = require('../../../.././Showdown/showoff.js')
 module.exports = {
     name: "battle",

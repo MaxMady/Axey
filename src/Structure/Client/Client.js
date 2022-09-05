@@ -3,6 +3,7 @@ const { loadCommands } = require("../../Functions/Discord/Handler/loadCommands")
 const { loadEvents } = require("../../Functions/Discord/Handler/loadEvents");
 const { loadSlashCommands } = require("../../Functions/Discord/Handler/loadSlashCommands");
 const TOKEN = require('../../../config.js').token
+let client;
 class Axey extends Client {
     constructor() {
         super({
@@ -67,9 +68,10 @@ class Axey extends Client {
             loadEvents(this);
             loadCommands(this);
             loadSlashCommands(this);
+            client = this
         } catch (err) {
             console.error(err);
         }
     }
 }
-module.exports = { Axey };
+module.exports = { Axey, client };

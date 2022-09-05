@@ -6,7 +6,7 @@ const e = require('./pageManager.js').e
 const { WebhookClient, EmbedBuilder } = require("discord.js");
 const {QuickDB} = require('quick.db')
 const db = new QuickDB()
-async function start(url, channel) {
+async function start(url, interaction) {
   console.log(url);
   let id = url.split("/")[3].split("-").join("-");
   e(async (page, browser, index) => {
@@ -15,15 +15,16 @@ async function start(url, channel) {
     let w1 = 0;
 
     console.log(`Connected to websocket`);
-    channel.send(`Connected to websocket!`);
+    await interaction.followUp(`Connected to websocket!`)
+    
     page.on("console", (message) => {
-      format(message.text(), page, browser, w1, channel, url, index);
+      format(message.text(), page, browser, w1, interaction, url, index);
     });
   }, 3000);
 })
 }
 let laturn = `1`;
-async function format(msg, page, browser, w1, channel, url, index) {
+async function format(msg, page, browser, w1, interaction, url, index) {
   if(!index) index = 0;
     const title = await page.title();
   let m = msg.split('\n')
@@ -39,7 +40,7 @@ async function format(msg, page, browser, w1, channel, url, index) {
         .setTitle(`${title}`)
         .setColor("Green")
         .setDescription(`${ai.split("|")[2]} has won the battle!`);
-      channel
+      interaction.channel
         .send({ embeds: [embed] })
         .then(async (e) => {
           let pagg = await db.get('page')
@@ -59,9 +60,7 @@ async function format(msg, page, browser, w1, channel, url, index) {
         .setTitle(`${title}`)
         .setColor("Green")
         .setDescription(`${ai.split("|")[2].split('forfieted.')[0]} has forfeited! The battle has ended...`);
-      channel
-        .send({ embeds: [embed] })
-        .then(async (e) => {
+      interaction.channel.send({ embeds: [embed] }).then(async (e) => {
           let pagg = await db.get('page')
           if(pagg === null) pagg = 1;
           pagg--;
@@ -308,7 +307,7 @@ async function format(msg, page, browser, w1, channel, url, index) {
   }
 
   if (w1 != 0) return;
-  channel.send({ embeds: [embed] }).then(async (e) => {
+  interaction.channel.send({ embeds: [embed] }).then(async (e) => {
     let id = url.split("/")[3].split("-").join("-");
     let img = await page.$(`#room-${id} > div.battle > div > div:nth-child(3)`);
     e.embeds[0];
@@ -330,7 +329,7 @@ async function format(msg, page, browser, w1, channel, url, index) {
     const exampleEmbed = EmbedBuilder.from(receivedEmbed).setImage(
       `attachment://battle_${index}.png`
     );
-    e.edit({ embeds: [exampleEmbed], files: [file] });
+    await e.edit({ embeds: [exampleEmbed], files: [file] });
   });
   
 }
