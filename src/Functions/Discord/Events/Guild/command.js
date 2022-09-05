@@ -30,7 +30,7 @@ module.exports = async (message) => {
     }
     const args = message.content.slice(PREFIX.length).trim().split(/ +/g);
     let commandName = args.shift().toLowerCase();
-    let command = client.commands.get(commandName) || client.commands.find(
+    let command = client.commandsz.get(commandName) || client.commandsz.find(
         (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
     );
     if (!command) return;

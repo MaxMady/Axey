@@ -9,7 +9,7 @@ async function loadCommands(client) {
         for (const file of commandFiles) {
             const command = require(`${process.cwd()}/src/Commands/Message/${folder}/${file}`);
             if (command.name) {
-                client.commands.set(command.name, command);
+                client.commandsz.set(command.name, command);
                 table.addRow(file, "✔️");
             }
             else {

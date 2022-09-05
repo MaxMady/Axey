@@ -10,6 +10,13 @@
 6. Finnally, run start.bat for starting the bot!
 
 ## Configurations
-|Name|Value|
--------------------
-|token|Your Bot token|
+
+| Key | Value |
+| ------ | ------ |
+| token | Bot Token |
+| clientId | Bot ID, enable Dev mode and copy |
+| guildId | Server where you want the slash commands |
+| directory | Directory name got from `Utils/dir.bat` |
+
+## Bugs 
+- Use `/report command to report all the bugs!`

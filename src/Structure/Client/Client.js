@@ -32,7 +32,7 @@ class Axey extends Client {
             },
             failIfNotExists: false,
         });
-        this.commands = new Collection();
+        this.commandsz = new Collection();
         this.aliases = new Collection();
         this.slash = new Collection();
         this.token = TOKEN;
