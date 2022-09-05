@@ -5,7 +5,7 @@ const { ActivityType, Collection } = require("discord.js");
 module.exports = async (client) => {
   client.commands = new Collection();
   
-  const commandsPath = 'C:\\Users\\K MANOJ KUMAR\\Desktop\\Codes\\Axey\\src\\Commands\\Interaction'
+  const commandsPath = require('../../../../../config.js').directory;
   const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
 
   for (const file of commandFiles) {

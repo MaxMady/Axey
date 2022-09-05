@@ -1,0 +1,2 @@
+node dir.js
+pause

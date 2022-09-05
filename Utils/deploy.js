@@ -2,15 +2,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { clientId, guildId , token} = require('./config');
+const { clientId, guildId , token} = require('../config');
 
 const commands = [];
-const commandsPath = 'C:\\Users\\K MANOJ KUMAR\\Desktop\\Codes\\Axey\\src\\Commands\\Interaction'
+const commandsPath = require('../config.js').directory
 console.log(commandsPath)
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	const command = require(`./src/Commands/Interaction/${file}`);
+	const command = require(`../src/Commands/Interaction/${file}`);
   console.log(command.data)
 	commands.push(command.data.toJSON());
 }
