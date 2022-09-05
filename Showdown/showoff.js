@@ -17,13 +17,14 @@ async function start(url, channel) {
     console.log(`Connected to websocket`);
     channel.send(`Connected to websocket!`);
     page.on("console", (message) => {
-      format(message.text(), page, browser, w1, channel, url);
+      format(message.text(), page, browser, w1, channel, url, index);
     });
   }, 3000);
 })
 }
 let laturn = `1`;
-async function format(msg, page, browser, w1, channel, url) {
+async function format(msg, page, browser, w1, channel, url, index) {
+  if(!index) index = 0;
     const title = await page.title();
   let m = msg.split('\n')
   m.forEach(async (ai) => {
@@ -31,6 +32,7 @@ async function format(msg, page, browser, w1, channel, url) {
       ai.includes("win") &&
       !ai.includes("Wyrmwind") &&
       !ai.includes("Tailwind"))) {
+        if(ai.includes(`p1:`) || ai.includes(`p2:`)) return;
       console.log(`Battle has ended!`);
       w1++;
       const embed = new EmbedBuilder()
@@ -318,15 +320,15 @@ async function format(msg, page, browser, w1, channel, url) {
         `#room-${id} > div.battle-controls > p:nth-child(1) > button:nth-child(5)`
       );
       await img.screenshot({
-        path: `Battle_Images/battle.png`,
+        path: `Battle_Images/battle_${index}.png`,
       });
     } catch (err) {
       console.log(`Error: 347`);
     }
-    const file = new AttachmentBuilder("./Battle_Images/battle.png");
+    const file = new AttachmentBuilder(`./Battle_Images/battle_${index}.png`);
     let receivedEmbed = e.embeds[0];
     const exampleEmbed = EmbedBuilder.from(receivedEmbed).setImage(
-      `attachment://battle.png`
+      `attachment://battle_${index}.png`
     );
     e.edit({ embeds: [exampleEmbed], files: [file] });
   });
