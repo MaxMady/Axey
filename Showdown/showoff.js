@@ -51,6 +51,8 @@ async function format(msg, page, browser, w1, channel, url) {
           if(pagg === 0) {
             await db.set(`browser`, null)
             await browser.close();
+          } else {
+            await page.close();
           }
           await db.set(`page`, pagg)
         });
