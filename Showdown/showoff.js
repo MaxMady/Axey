@@ -41,8 +41,9 @@ async function start(url, interaction) {
 let laturn = `1`;
 async function format(msg, page, browser, w1, interaction, url, index) {
   if (!index) index = 0;
+  let title;
   try {
-    const title = await page.title();
+     title = await page.title();
   } catch (err) {
     console.log(err);
     await interaction.followUp({
