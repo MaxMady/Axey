@@ -27,7 +27,8 @@ module.exports = {
                 .setTitle(`Notification`)
                 .setURL('https://discord.gg/JKP8yJYSar')
                 .setDescription(`\`💡\` If you seem anything wrong, you can report it via \`/report\` command!\n> You can always join the [support server](https://discord.gg/JKP8yJYSar) to recieve the latest updates!`)
-            ]
+            ],
+            ephemeral: true
          })   
         }
 	},
