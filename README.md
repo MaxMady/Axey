@@ -1,5 +1,9 @@
 # Axey
 
+## What is Axey?
+Axey is a Discord bot based on [Pokemon Showdown](http://play.pokemonshowdown.com/)... It is used to broadcast live showdown matches and events to discord using puppeteer. 
+**Requires NodeJS installed to run!**
+
 ## <u>Installing</u>
 
 1.  Firstly, you need to have NodeJS installed.
